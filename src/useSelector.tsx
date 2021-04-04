@@ -5,7 +5,7 @@ import { getState, subscribe, unsubscribe } from './store/index';
 type SelectorFunction = (state: any) => any
 
 export function useSelector(selectorFn: SelectorFunction) {
-    const [currentStore, setCurrentStore] = useState(getState())
+    const [currentStore] = useState(getState())
     const [nextSelectedStateValue, setNextSelectedStateValue] = useState(selectorFn ? selectorFn(currentStore) : undefined)
     
     const latestSelectedState = useRef();
