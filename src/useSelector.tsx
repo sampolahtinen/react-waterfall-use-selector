@@ -26,13 +26,10 @@ export function useSelector(selectorFn: SelectorFunction) {
       }
 
       const handleSubscription = () => {
-        console.log('sub called')
         const nextState = getState()
         if (selectorFn) {
           const nextStateValue = selectorFn(nextState)
-          // console.log('NEXT STATE VALUE FROM SUBS: ', nextStateValue)
           if (nextStateValue !== nextSelectedStateValue) {
-            // console.log('setting new selected value:', nextStateValue)
             setNextSelectedStateValue(nextStateValue)
           }
         }
