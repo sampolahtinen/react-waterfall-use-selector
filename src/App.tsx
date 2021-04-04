@@ -1,24 +1,22 @@
-import React from 'react';
-import logo from './logo.svg';
+import { useState } from 'react';
 import './App.css';
+import ConnectedComponent from './ConnectedComponent';
+import { Provider } from './store';
+import { SubscribedComponent } from './SubscribedComponent';
 
 function App() {
+  const [toggle, setToggle] = useState(false)
+  const [isSubCompVisible, setIsSubCompVisible] = useState(true)
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <Provider>
+        <ConnectedComponent />
+        {isSubCompVisible && (
+          <SubscribedComponent matchString={toggle ? 'test' : 123} />
+        )}
+        <button style={{margin: '20px 0'}} type="button" onClick={() => setToggle(!toggle)}>TOGGLE</button>
+        <button type="button" onClick={() => setIsSubCompVisible(!isSubCompVisible)}>TOGGLE SUBSCRIBED COMPONENT MOUNT</button>
+      </Provider>
     </div>
   );
 }

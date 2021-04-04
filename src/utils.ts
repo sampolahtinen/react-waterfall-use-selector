@@ -1,0 +1,1 @@
+export  const log = (message: string, event?) => console.log(event, message)
