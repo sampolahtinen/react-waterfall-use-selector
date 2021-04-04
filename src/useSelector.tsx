@@ -8,14 +8,21 @@ export function useSelector(selectorFn: SelectorFunction) {
     const [currentStore, setCurrentStore] = useState(getState())
     const [nextSelectedStateValue, setNextSelectedStateValue] = useState(selectorFn ? selectorFn(currentStore) : undefined)
     
-    const prevSelectedState = useRef();
-    const prevSelector = useRef(state => state);
-    const prevStore = useRef();
+    const latestSelectedState = useRef();
+    const latestSelector = useRef(state => state);
+    const latestStore = useRef();
+
+    /** After logic, store the values from this round to the refs */
+    useEffect(() => {
+      latestSelector.current = selectorFn;
+      latestStore.current = getState();
+      latestSelectedState.current = selectorFn(getState());
+    })
 
     useEffect(() => {
-      if (selectorFn !== prevSelector.current) {
+      if (selectorFn !== latestSelector.current || latestSelectedState.current !== nextSelectedStateValue) {
         console.log('different selectors')
-        setNextSelectedStateValue(selectorFn(getState()))
+        setNextSelectedStateValue(latestSelectedState.current)
       }
 
       const handleSubscription = () => {
@@ -23,8 +30,6 @@ export function useSelector(selectorFn: SelectorFunction) {
         const nextState = getState()
         if (selectorFn) {
           const nextStateValue = selectorFn(nextState)
-          console.log(nextStateValue)
-          console.log(nextSelectedStateValue)
           // console.log('NEXT STATE VALUE FROM SUBS: ', nextStateValue)
           if (nextStateValue !== nextSelectedStateValue) {
             // console.log('setting new selected value:', nextStateValue)
@@ -38,13 +43,6 @@ export function useSelector(selectorFn: SelectorFunction) {
         unsubscribe(handleSubscription, currentStore)
       }
     }, [nextSelectedStateValue, currentStore, selectorFn]);
-
-      /** After logic, store the values from this round to the refs */
-      useEffect(() => {
-        prevSelector.current = selectorFn;
-        prevStore.current = getState();
-        prevSelectedState.current = nextSelectedStateValue;
-      })
 
     return nextSelectedStateValue;
 }
